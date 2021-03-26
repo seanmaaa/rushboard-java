@@ -1,11 +1,11 @@
 bootJar {
     enabled = true
-    mainClassName = "com.seanmakr.rushboard.RushboardBatchApplication"
+    mainClassName = "com.rushboard.RushboardBatchApplication"
     archiveFileName = "rushboardBatchApp.jar"
 }
 
 bootRun {
-    main = "com.seanmakr.rushboard.RushboardBatchApplication"
+    main = "com.rushboard.RushboardBatchApplication"
 }
 
 dependencies {

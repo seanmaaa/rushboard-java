@@ -1,11 +1,11 @@
 bootJar {
     enabled = true
-    mainClassName = "com.seanmakr.rushboard.RushboardGatewayApplication"
+    mainClassName = "com.rushboard.RushboardGatewayApplication"
     archiveFileName = "rushboardGatewayApp.jar"
 }
 
 bootRun {
-    main = "com.seanmakr.rushboard.RushboardGatewayApplication"
+    main = "com.rushboard.RushboardGatewayApplication"
 }
 
 dependencies {
