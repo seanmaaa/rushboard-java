@@ -1,0 +1,17 @@
+bootJar {
+    enabled = true
+    mainClassName = "com.seanmakr.rushboard.RushboardBatchApplication"
+    archiveFileName = "rushboardBatchApp.jar"
+}
+
+bootRun {
+    main = "com.seanmakr.rushboard.RushboardBatchApplication"
+}
+
+dependencies {
+    compile project(':module-client:rushboard-external-client')
+    compile project(':module-infrastructure:rushboard-rdbms-domain')
+    compile project(':module-infrastructure:rushboard-redis-domain')
+
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
+}

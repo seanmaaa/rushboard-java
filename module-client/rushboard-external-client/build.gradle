@@ -1,0 +1,11 @@
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+dependencies {
+    compile project(':module-core:rushboard-common')
+}

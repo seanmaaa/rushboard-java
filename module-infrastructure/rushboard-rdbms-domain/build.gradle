@@ -1,0 +1,17 @@
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+dependencies {
+    compile project(':module-core:rushboard-common')
+    compile group: 'org.springframework.data', name: 'spring-data-r2dbc', version: '1.1.7.RELEASE'
+    //for dev
+    compile 'com.h2database:h2'
+    compile 'io.r2dbc:r2dbc-h2:0.8.4.RELEASE'
+    //for prod
+    compile 'io.r2dbc:r2dbc-postgresql:0.8.7.RELEASE'
+}
