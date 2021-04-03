@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: rushboard-api-app
+server:
+  port: 8085
