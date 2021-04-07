@@ -1,5 +1,13 @@
 spring:
+#  profiles:
+#    active: dev
+#  r2dbc:
+#    name: rushboard
+#    url: r2dbc:postgres://{YOUR_POSTGRESQL_DB_ADDR}:{PORT}}/{DBNAME}
+#    username: {YOUR_USERNAME}
+#    password: {YOUR_PASSWORD}
   application:
     name: rushboard-api-app
+
 server:
   port: 8085
