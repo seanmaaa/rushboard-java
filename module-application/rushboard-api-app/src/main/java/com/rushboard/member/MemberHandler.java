@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -29,10 +30,12 @@ import reactor.core.publisher.Mono;
 public class MemberHandler {
   private final Logger logger = LoggerFactory.getLogger(getClass());
   private final MemberRepository memberRepository;
+  private final Pbkdf2PasswordEncoder passwordEncoder;
 
   @Autowired
-  public MemberHandler(MemberRepository memberRepository) {
+  public MemberHandler(MemberRepository memberRepository, Pbkdf2PasswordEncoder passwordEncoder) {
     this.memberRepository = memberRepository;
+    this.passwordEncoder = passwordEncoder;
   }
 
   @Transactional
@@ -48,7 +51,7 @@ public class MemberHandler {
                             .body(Mono.just(ApiResponse(error)), RushboardResponse.class),
                     member ->
                         memberRepository
-                            .save(member)
+                            .save(member.encodePassword(passwordEncoder::encode))
                             .flatMap(
                                 result ->
                                     ServerResponse.status(HttpStatus.CREATED)
@@ -81,7 +84,7 @@ public class MemberHandler {
                                         .flatMap(
                                             member -> {
                                               if (updateRequest.getPassword() != null)
-                                                member.setPassword(updateRequest.getPassword());
+                                                member.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
                                               if (updateRequest.getEmail() != null)
                                                 member.setEmail(updateRequest.getEmail());
                                               if (updateRequest.getMobile() != null)
