@@ -7,8 +7,8 @@ import lombok.Getter;
 @Getter
 public class RushboardResponse {
 
-  private final String error;
   private final String message;
+  private final String description;
 
   public static RushboardResponse ApiResponse(String message, String description) {
     return new RushboardResponse(message, description);
