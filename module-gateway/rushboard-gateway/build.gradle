@@ -9,6 +9,9 @@ bootRun {
 }
 
 dependencies {
+    compile project(':module-core:rushboard-common')
+    compile project(':module-client:rushboard-auth-client')
+
     implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
 }
 

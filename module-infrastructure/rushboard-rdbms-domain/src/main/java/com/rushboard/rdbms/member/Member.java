@@ -1,7 +1,7 @@
 package com.rushboard.rdbms.member;
 
 import com.rushboard.rdbms.member.type.RegType;
-import com.rushboard.rdbms.member.type.RoleType;
+import com.rushboard.core.mapping.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

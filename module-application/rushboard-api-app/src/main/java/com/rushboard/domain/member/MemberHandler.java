@@ -1,4 +1,4 @@
-package com.rushboard.member;
+package com.rushboard.domain.member;
 
 import com.rushboard.core.constant.CommonConstants;
 import com.rushboard.core.response.ExceptionType;
@@ -8,7 +8,7 @@ import com.rushboard.core.response.RushboardResponse;
 import static com.rushboard.core.response.RushboardResponse.ApiResponse;
 
 import com.rushboard.core.util.Try;
-import com.rushboard.member.MemberRequest.*;
+import com.rushboard.domain.member.MemberRequest.*;
 import com.rushboard.rdbms.member.MemberRepository;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
