@@ -11,3 +11,12 @@ spring:
 
 server:
   port: 8085
+
+rushboard:
+  app:
+    security:
+      salt: PdkC30sm1!
+  auth:
+    enable: true
+    jwt:
+      secretKey: {YOUR_SECRET_KEY}
