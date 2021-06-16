@@ -1,4 +1,4 @@
-package com.rushboard.member;
+package com.rushboard.domain.member;
 
 import com.rushboard.core.response.ExceptionType;
 import com.rushboard.core.util.Either;
@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 
 public interface MemberRequest {
   Pattern mobilePattern = Pattern.compile("^\\d{2,3}-\\d{3,4}-\\d{4}$");

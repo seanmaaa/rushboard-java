@@ -1,4 +1,4 @@
-package com.rushboard.main;
+package com.rushboard.domain.main;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

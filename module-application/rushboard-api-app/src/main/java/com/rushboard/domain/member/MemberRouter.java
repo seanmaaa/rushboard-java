@@ -1,4 +1,4 @@
-package com.rushboard.member;
+package com.rushboard.domain.member;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;

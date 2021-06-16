@@ -1,4 +1,4 @@
-package com.rushboard.main;
+package com.rushboard.domain.main;
 
 import org.springdoc.core.annotations.RouterOperation;
 import org.springdoc.core.annotations.RouterOperations;

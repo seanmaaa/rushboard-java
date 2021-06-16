@@ -1,4 +1,4 @@
-package com.rushboard.rdbms.member.type;
+package com.rushboard.core.mapping;
 
 public enum RoleType {
   TEMP,
