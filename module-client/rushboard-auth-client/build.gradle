@@ -9,6 +9,7 @@ jar {
 dependencies {
     compile project(':module-core:rushboard-common')
 
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'org.springframework.boot:spring-boot-starter-oauth2-client'
     compile 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
