@@ -1,49 +1,31 @@
 package com.rushboard.client.auth.jwt;
 
-import com.rushboard.client.auth.constants.TokenType;
+import com.rushboard.client.auth.constants.RushboardJwtClaimNames;
+import com.rushboard.client.auth.model.AuthProperty;
 import com.rushboard.core.mapping.RoleType;
+import java.util.Map;
+import java.util.UUID;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 public class RushboardJwtToken extends JwtAuthenticationToken {
 
-  private final TokenType tokenType;
-
-  private RoleType userRole;
-
-  private int userId;
+  private final AuthProperty authProperty;
 
   public RushboardJwtToken(Jwt jwt) {
     super(jwt);
-    super.setAuthenticated(true);
-    this.tokenType = TokenType.ACCESS_TOKEN;
+    this.authProperty =
+        new AuthProperty(
+            UUID.fromString(jwt.getClaim(RushboardJwtClaimNames.USER_ID.getValue())),
+            RoleType.valueOf(jwt.getClaim(RushboardJwtClaimNames.USER_ROLE.getValue())));
   }
 
-  public RoleType getRole() {
-    return (RoleType) getTokenAttributes().get("Role");
+  @Override
+  public Map<String, Object> getTokenAttributes() {
+    return null;
   }
 
-  //  private final RoleType roleType;
-  //  private final int memberSeqId;
-  //  private final DecodedJWT jwtToken;
-
-  //  @Override
-  //  public Object getCredentials() {
-  //    return jwtToken;
-  //  }
-  //
-  //  @Override
-  //  public Object getPrincipal() {
-  //    return memberSeqId;
-  //  }
-
-  //  public RushboardJwtToken(int memberSeqId, RoleType roleType, DecodedJWT jwtToken) {
-  //    super();
-  ////    super(Collections.singletonList(new SimpleGrantedAuthority(roleType.name())));
-  //    this.roleType = roleType;
-  //    this.jwtToken = jwtToken;
-  //    this.memberSeqId = memberSeqId;
-  //    super.setAuthenticated(true);
-  //  }
-
+  public AuthProperty getAuthProperty() {
+    return authProperty;
+  }
 }

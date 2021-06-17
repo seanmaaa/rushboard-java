@@ -8,14 +8,12 @@ jar {
 
 dependencies {
     compile project(':module-core:rushboard-common')
-
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'org.springframework.boot:spring-boot-starter-oauth2-client'
     compile 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 
-    testCompile 'org.springframework.boot:spring-boot-starter-test'
-    testCompile 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
 }

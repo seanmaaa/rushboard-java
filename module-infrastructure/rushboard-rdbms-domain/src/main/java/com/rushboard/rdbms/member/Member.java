@@ -2,6 +2,7 @@ package com.rushboard.rdbms.member;
 
 import com.rushboard.rdbms.member.type.RegType;
 import com.rushboard.core.mapping.RoleType;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,7 @@ public class Member {
     this.mobile = mobile;
   }
 
-  @Id private int seqid;
+  @Id private UUID memberid;
 
   private String username;
 
@@ -36,7 +37,7 @@ public class Member {
 
   private RoleType role;
 
-  private boolean certified;
+  private boolean verified;
 
   private Timestamp createdat;
 

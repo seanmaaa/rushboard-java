@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtReactiveAuthenticationManager;
 
 @Configuration
 public class JwtConfiguration {
@@ -23,7 +22,8 @@ public class JwtConfiguration {
   @Bean
   public ReactiveJwtDecoder reactiveJwtDecoder() {
     logger.info("using reactiveJwtDecoder with secretKey {}", secretKey);
-    return NimbusReactiveJwtDecoder.withSecretKey(new SecretKeySpec(secretKey.getBytes(), "HMACSHA256"))
+    return NimbusReactiveJwtDecoder.withSecretKey(
+            new SecretKeySpec(secretKey.getBytes(), "HMACSHA256"))
         .macAlgorithm(MacAlgorithm.HS256)
         .build();
   }
@@ -36,6 +36,6 @@ public class JwtConfiguration {
 
   @Bean
   public JwtAuthenticationManager authenticationManager() {
-    return new JwtAuthenticationManager(reactiveJwtDecoder());
+    return new JwtAuthenticationManager();
   }
 }

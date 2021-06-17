@@ -20,15 +20,15 @@ public class MemberRouter {
 
   @RouterOperations({
     @RouterOperation(
-        path = "/member/save",
+        path = "/register/save",
         beanClass = MemberHandler.class,
         beanMethod = "saveMember"),
     @RouterOperation(
-        path = "/member/emailCheck",
+        path = "/register/emailCheck",
         beanClass = MemberHandler.class,
         beanMethod = "emailDuplicationCheck"),
     @RouterOperation(
-        path = "/member/usernameCheck",
+        path = "/register/usernameCheck",
         beanClass = MemberHandler.class,
         beanMethod = "usernameDuplicationCheck")
   })
@@ -37,17 +37,20 @@ public class MemberRouter {
     return route()
         .path(
             "/member",
-            rootPath ->
-                rootPath
-                    .nest(
-                        accept(APPLICATION_JSON),
-                        subPath ->
-                            subPath
-                                .POST("/save", memberHandler::saveMember)
-                                .PATCH("/update/{username}", memberHandler::updateMember))
+            memberPath ->
+                memberPath.nest(
+                    accept(APPLICATION_JSON),
+                    subPath ->
+                        subPath
+                            .PATCH("/update", memberHandler::updateMember)
+                            .DELETE("/delete", memberHandler::deleteMember)))
+        .path(
+            "/register",
+            registerPath ->
+                registerPath
+                    .POST("/save", accept(APPLICATION_JSON), memberHandler::saveMember)
                     .GET("/emailCheck", memberHandler::emailDuplicationCheck)
-                    .GET("/usernameCheck", memberHandler::usernameDuplicationCheck)
-                    .DELETE("/delete/{username}", memberHandler::deleteMember))
+                    .GET("/usernameCheck", memberHandler::usernameDuplicationCheck))
         .build();
   }
 }
