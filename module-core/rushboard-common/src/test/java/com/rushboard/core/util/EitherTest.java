@@ -1,11 +1,11 @@
 package com.rushboard.core.util;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.function.Function;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class EitherTest {
+class EitherTest {
 
   Function<Integer, Either<Exception, Integer>> div =
       num -> {
@@ -17,19 +17,19 @@ public class EitherTest {
       };
 
   @Test
-  public void eitherNormalCaseTest() {
+  void eitherNormalCaseTest() {
     assertTrue(div.apply(2).isRight());
     assertTrue(div.apply(0).isLeft());
   }
 
   @Test
-  public void eitherFoldTest() {
-    assertTrue(div.apply(2).fold(left -> false, right -> true));
-    assertTrue(div.apply(0).fold(left -> true, right -> false));
+  void eitherFoldTest() {
+    assertTrue(div.apply(2).fold(left -> false, right -> true).booleanValue());
+    assertTrue(div.apply(0).fold(left -> true, right -> false).booleanValue());
   }
 
   @Test
-  public void eitherGetValueTest() {
+  void eitherGetValueTest() {
     assertTrue(div.apply(2).right() instanceof Integer);
     assertTrue(div.apply(0).left() instanceof Exception);
   }
