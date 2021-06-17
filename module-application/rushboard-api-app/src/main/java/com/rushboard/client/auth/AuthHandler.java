@@ -58,7 +58,7 @@ public class AuthHandler {
                                     loginRequest.getPassword(), member.getPassword())
                                 ? ServerResponse.ok()
                                     .body(
-                                        Mono.just(jwtProviderManager.issueTokenSet(member.getSeqid(), member.getRole())),
+                                        Mono.just(jwtProviderManager.issueTokenSet(member.getMemberid(), member.getRole())),
                                         RushboardTokenSet.class)
                                 : ServerResponse.status(HttpStatus.UNAUTHORIZED)
                                     .body(

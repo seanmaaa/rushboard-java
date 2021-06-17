@@ -1,5 +1,6 @@
 package com.rushboard.domain.member;
 
+import com.rushboard.client.auth.model.AuthProperty;
 import com.rushboard.core.constant.CommonConstants;
 import com.rushboard.core.response.ExceptionType;
 import com.rushboard.core.response.ResponseType;
@@ -65,9 +66,10 @@ public class MemberHandler {
 
   @Transactional
   public Mono<ServerResponse> updateMember(ServerRequest request) {
-    return Mono.justOrEmpty(Try.of(request::pathVariable, CommonConstants.USERNAME).toOptional())
+    return Mono.justOrEmpty(Try.of(request.headers()::firstHeader, CommonConstants.AUTH_PROPERTY).toOptional())
+        .flatMap(apBase64 -> Mono.justOrEmpty(Try.of(AuthProperty::fromBase64, apBase64).toOptional()))
         .flatMap(
-            username ->
+            authProperty ->
                 request
                     .bodyToMono(MemberUpdateRequest.class)
                     .map(MemberUpdateRequest::validate)
@@ -80,7 +82,7 @@ public class MemberHandler {
                                             Mono.just(ApiResponse(error)), RushboardResponse.class),
                                 updateRequest ->
                                     memberRepository
-                                        .findOneByUsername(username)
+                                        .findOneByMemberid(authProperty.getMemberId())
                                         .flatMap(
                                             member -> {
                                               if (updateRequest.getPassword() != null)
@@ -107,11 +109,12 @@ public class MemberHandler {
 
   @Transactional
   public Mono<ServerResponse> deleteMember(ServerRequest request) {
-    return Mono.justOrEmpty(Try.of(request::pathVariable, CommonConstants.USERNAME).toOptional())
+    return Mono.justOrEmpty(Try.of(request.headers()::firstHeader, CommonConstants.AUTH_PROPERTY).toOptional())
+        .flatMap(apBase64 -> Mono.justOrEmpty(Try.of(AuthProperty::fromBase64, apBase64).toOptional()))
         .flatMap(
-            username ->
+            authProperty ->
                 memberRepository
-                    .findOneByUsername(username.toLowerCase())
+                    .findOneByMemberid(authProperty.getMemberId())
                     .flatMap(
                         member ->
                             memberRepository

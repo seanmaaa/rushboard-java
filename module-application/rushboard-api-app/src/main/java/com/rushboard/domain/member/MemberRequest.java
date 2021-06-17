@@ -12,8 +12,7 @@ import lombok.RequiredArgsConstructor;
 public interface MemberRequest {
   Pattern mobilePattern = Pattern.compile("^\\d{2,3}-\\d{3,4}-\\d{4}$");
   Pattern emailPattern =
-      Pattern.compile(
-          "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$");
+      Pattern.compile("^[0-9a-zA-Z._-]+@[0-9a-zA-Z._-]+.[a-zA-Z]{2,6}$");
 
   Either<ExceptionType, ?> validate();
 
@@ -46,6 +45,7 @@ public interface MemberRequest {
   @AllArgsConstructor
   @Data
   class MemberUpdateRequest implements MemberRequest {
+    @NotNull private final String username;
     private final String password;
     private final String email;
     private final String mobile;

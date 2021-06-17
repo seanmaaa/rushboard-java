@@ -8,10 +8,10 @@ import com.rushboard.client.auth.jwt.RushboardTokenSet;
 import com.rushboard.client.auth.manager.JwtAuthenticationManager;
 import com.rushboard.client.auth.manager.JwtProviderManager;
 import com.rushboard.core.mapping.RoleType;
+import java.util.UUID;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 
@@ -26,26 +26,24 @@ class JwtTest {
     reactiveJwtDecoder = NimbusReactiveJwtDecoder.withSecretKey(secretKey)
         .macAlgorithm(MacAlgorithm.HS256)
         .build();
-    jwtReactiveAuthenticationManager = new JwtAuthenticationManager(reactiveJwtDecoder);
+    jwtReactiveAuthenticationManager = new JwtAuthenticationManager();
   }
 
   @Test
   void issueTokenSet() {
-    RushboardTokenSet rushboardTokenSet = jwtProviderManager.issueTokenSet(1, RoleType.MEMBER);
-
-    Jwt decodedAccessToken = reactiveJwtDecoder.decode(rushboardTokenSet.getAccessToken()).block();
-
-    System.out.println(decodedAccessToken.getClaims());
-
-    assertEquals(decodedAccessToken.getClaim("tktyp"), TokenType.ACCESS_TOKEN.toString());
+    RushboardTokenSet rushboardTokenSet =
+        jwtProviderManager.issueTokenSet(UUID.randomUUID(), RoleType.MEMBER);
+    RushboardJwtToken decodedAccessToken = new RushboardJwtToken(reactiveJwtDecoder.decode(rushboardTokenSet.getAccessToken()).block());
+    assertEquals(TokenType.ACCESS_TOKEN.toString(), decodedAccessToken.getName());
   }
 
   @Test
   void authenticate() {
-    RushboardTokenSet rushboardTokenSet = jwtProviderManager.issueTokenSet(1, RoleType.MEMBER);
+    RushboardTokenSet rushboardTokenSet = jwtProviderManager.issueTokenSet(UUID.randomUUID(), RoleType.MEMBER);
     assertNotNull(reactiveJwtDecoder
         .decode(rushboardTokenSet.getAccessToken())
-        .filter(accessToken -> accessToken.getClaim("tktyp").equals(TokenType.ACCESS_TOKEN.toString()))
-        .flatMap(jwtToken -> jwtReactiveAuthenticationManager.authenticate(new RushboardJwtToken(jwtToken))).block());
+        .map(RushboardJwtToken::new)
+        .filter(jwtToken -> jwtToken.getName().equals(TokenType.ACCESS_TOKEN.toString()))
+        .flatMap(jwtReactiveAuthenticationManager::authenticate).block());
   }
 }
