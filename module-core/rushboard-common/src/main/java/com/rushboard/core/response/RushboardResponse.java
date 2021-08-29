@@ -10,11 +10,11 @@ public class RushboardResponse {
   private final String message;
   private final String description;
 
-  public static RushboardResponse ApiResponse(String message, String description) {
+  public static RushboardResponse apiResponse(String message, String description) {
     return new RushboardResponse(message, description);
   }
 
-  public static RushboardResponse ApiResponse(RushboardType rushboardType) {
+  public static RushboardResponse apiResponse(RushboardType rushboardType) {
     return new RushboardResponse(rushboardType.toString(), rushboardType.getDescription());
   }
 }

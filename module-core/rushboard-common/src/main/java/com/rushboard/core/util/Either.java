@@ -32,7 +32,7 @@ public final class Either<A,B> {
   }
 
   public static <A,B> Either<A,B> right(B b) {
-    return new Either<A,B>(null,b);
+    return new Either<>(null,b);
   }
 
   public <R> R fold(Function<? super A, ? extends R> leftOperation, Function<? super B, ? extends R> rightOperation) {

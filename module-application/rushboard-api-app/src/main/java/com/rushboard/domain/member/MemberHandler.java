@@ -5,17 +5,14 @@ import com.rushboard.core.constant.CommonConstants;
 import com.rushboard.core.response.ExceptionType;
 import com.rushboard.core.response.ResponseType;
 import com.rushboard.core.response.RushboardResponse;
-
-import static com.rushboard.core.response.RushboardResponse.ApiResponse;
-
 import com.rushboard.core.util.Try;
-import com.rushboard.domain.member.MemberRequest.*;
+import com.rushboard.domain.member.MemberRequest.MemberSaveRequest;
+import com.rushboard.domain.member.MemberRequest.MemberUpdateRequest;
 import com.rushboard.rdbms.member.MemberRepository;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -27,11 +24,17 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.ServerWebInputException;
 import reactor.core.publisher.Mono;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 @Component
 public class MemberHandler {
   private final Logger logger = LoggerFactory.getLogger(getClass());
   private final MemberRepository memberRepository;
   private final Pbkdf2PasswordEncoder passwordEncoder;
+
+  @Value("${rushboard.app.member.registeration.email_verification_required?:false}")
+  private boolean emailVerificationEnabled;
 
   @Autowired
   public MemberHandler(MemberRepository memberRepository, Pbkdf2PasswordEncoder passwordEncoder) {
@@ -49,16 +52,21 @@ public class MemberHandler {
                 validResult.fold(
                     error ->
                         ServerResponse.badRequest()
-                            .body(Mono.just(ApiResponse(error)), RushboardResponse.class),
+                            .body(
+                                Mono.just(RushboardResponse.apiResponse(error)),
+                                RushboardResponse.class),
                     member ->
                         memberRepository
-                            .save(member.encodePassword(passwordEncoder::encode))
+                            .save(
+                                member
+                                    .encodePassword(passwordEncoder::encode)
+                                    .setVerified(!emailVerificationEnabled))
                             .flatMap(
                                 result ->
                                     ServerResponse.status(HttpStatus.CREATED)
                                         .body(
                                             Mono.just(
-                                                ApiResponse(
+                                                RushboardResponse.apiResponse(
                                                     CommonConstants.CREATED, member.getUsername())),
                                             RushboardResponse.class))))
         .onErrorResume(this::fallBack);
@@ -66,8 +74,10 @@ public class MemberHandler {
 
   @Transactional
   public Mono<ServerResponse> updateMember(ServerRequest request) {
-    return Mono.justOrEmpty(Try.of(request.headers()::firstHeader, CommonConstants.AUTH_PROPERTY).toOptional())
-        .flatMap(apBase64 -> Mono.justOrEmpty(Try.of(AuthProperty::fromBase64, apBase64).toOptional()))
+    return Mono.justOrEmpty(
+            Try.of(request.headers()::firstHeader, CommonConstants.AUTH_PROPERTY).toOptional())
+        .flatMap(
+            apBase64 -> Mono.justOrEmpty(Try.of(AuthProperty::fromBase64, apBase64).toOptional()))
         .flatMap(
             authProperty ->
                 request
@@ -79,14 +89,17 @@ public class MemberHandler {
                                 error ->
                                     ServerResponse.badRequest()
                                         .body(
-                                            Mono.just(ApiResponse(error)), RushboardResponse.class),
+                                            Mono.just(RushboardResponse.apiResponse(error)),
+                                            RushboardResponse.class),
                                 updateRequest ->
                                     memberRepository
                                         .findOneByMemberid(authProperty.getMemberId())
                                         .flatMap(
                                             member -> {
                                               if (updateRequest.getPassword() != null)
-                                                member.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
+                                                member.setPassword(
+                                                    passwordEncoder.encode(
+                                                        updateRequest.getPassword()));
                                               if (updateRequest.getEmail() != null)
                                                 member.setEmail(updateRequest.getEmail());
                                               if (updateRequest.getMobile() != null)
@@ -102,15 +115,17 @@ public class MemberHandler {
         .switchIfEmpty(
             ServerResponse.badRequest()
                 .body(
-                    Mono.just(ApiResponse(ResponseType.PARAMETER_MISSING)),
+                    Mono.just(RushboardResponse.apiResponse(ResponseType.PARAMETER_MISSING)),
                     RushboardResponse.class))
         .onErrorResume(this::fallBack);
   }
 
   @Transactional
   public Mono<ServerResponse> deleteMember(ServerRequest request) {
-    return Mono.justOrEmpty(Try.of(request.headers()::firstHeader, CommonConstants.AUTH_PROPERTY).toOptional())
-        .flatMap(apBase64 -> Mono.justOrEmpty(Try.of(AuthProperty::fromBase64, apBase64).toOptional()))
+    return Mono.justOrEmpty(
+            Try.of(request.headers()::firstHeader, CommonConstants.AUTH_PROPERTY).toOptional())
+        .flatMap(
+            apBase64 -> Mono.justOrEmpty(Try.of(AuthProperty::fromBase64, apBase64).toOptional()))
         .flatMap(
             authProperty ->
                 memberRepository
@@ -125,7 +140,7 @@ public class MemberHandler {
         .switchIfEmpty(
             ServerResponse.badRequest()
                 .body(
-                    Mono.just(ApiResponse(ResponseType.PARAMETER_MISSING)),
+                    Mono.just(RushboardResponse.apiResponse(ResponseType.PARAMETER_MISSING)),
                     RushboardResponse.class))
         .onErrorResume(this::fallBack);
   }
@@ -141,17 +156,19 @@ public class MemberHandler {
                         result ->
                             ServerResponse.status(HttpStatus.CONFLICT)
                                 .body(
-                                    Mono.just(ApiResponse(ResponseType.EMAIL_ALREADY_EXISTS)),
+                                    Mono.just(
+                                        RushboardResponse.apiResponse(
+                                            ResponseType.EMAIL_ALREADY_EXISTS)),
                                     RushboardResponse.class))
                     .switchIfEmpty(
                         ServerResponse.ok()
                             .body(
-                                Mono.just(ApiResponse(ResponseType.AVAILABLE)),
+                                Mono.just(RushboardResponse.apiResponse(ResponseType.AVAILABLE)),
                                 RushboardResponse.class)))
         .switchIfEmpty(
             ServerResponse.badRequest()
                 .body(
-                    Mono.just(ApiResponse(ResponseType.PARAMETER_MISSING)),
+                    Mono.just(RushboardResponse.apiResponse(ResponseType.PARAMETER_MISSING)),
                     RushboardResponse.class))
         .onErrorResume(this::fallBack);
   }
@@ -167,17 +184,19 @@ public class MemberHandler {
                         result ->
                             ServerResponse.status(HttpStatus.CONFLICT)
                                 .body(
-                                    Mono.just(ApiResponse(ResponseType.USERNAME_ALREADY_EXISTS)),
+                                    Mono.just(
+                                        RushboardResponse.apiResponse(
+                                            ResponseType.USERNAME_ALREADY_EXISTS)),
                                     RushboardResponse.class))
                     .switchIfEmpty(
                         ServerResponse.ok()
                             .body(
-                                Mono.just(ApiResponse(ResponseType.AVAILABLE)),
+                                Mono.just(RushboardResponse.apiResponse(ResponseType.AVAILABLE)),
                                 RushboardResponse.class)))
         .switchIfEmpty(
             ServerResponse.badRequest()
                 .body(
-                    Mono.just(ApiResponse(ResponseType.PARAMETER_MISSING)),
+                    Mono.just(RushboardResponse.apiResponse(ResponseType.PARAMETER_MISSING)),
                     RushboardResponse.class))
         .onErrorResume(this::fallBack);
   }
@@ -187,22 +206,27 @@ public class MemberHandler {
       logger.error("DataIntegrityViolationException: {}", error.getCause().getMessage());
       return ServerResponse.badRequest()
           .body(
-              Mono.just(ApiResponse(ExceptionType.DATA_INTEGRITY_VIOLATION)),
+              Mono.just(RushboardResponse.apiResponse(ExceptionType.DATA_INTEGRITY_VIOLATION)),
               RushboardResponse.class);
     } else if (error instanceof DataAccessException) {
       logger.error("DataAccessException: {}", error.getCause().getMessage());
       return ServerResponse.badRequest()
-          .body(Mono.just(ApiResponse(ExceptionType.DATABASE_EXCEPTION)), RushboardResponse.class);
+          .body(
+              Mono.just(RushboardResponse.apiResponse(ExceptionType.DATABASE_EXCEPTION)),
+              RushboardResponse.class);
     } else if (error instanceof ServerWebInputException
         || error instanceof IllegalArgumentException) {
       logger.warn("Wrong formatted request: {}", error.getCause().getMessage());
       return ServerResponse.badRequest()
           .body(
-              Mono.just(ApiResponse(ExceptionType.WRONG_REQUEST_FORMAT)), RushboardResponse.class);
+              Mono.just(RushboardResponse.apiResponse(ExceptionType.WRONG_REQUEST_FORMAT)),
+              RushboardResponse.class);
     } else {
       logger.error("Severe exception occurred.", error);
       return ServerResponse.badRequest()
-          .body(Mono.just(ApiResponse(ExceptionType.BAD_REQUEST)), RushboardResponse.class);
+          .body(
+              Mono.just(RushboardResponse.apiResponse(ExceptionType.BAD_REQUEST)),
+              RushboardResponse.class);
     }
   }
 }

@@ -2,10 +2,16 @@ bootJar {
     enabled = false
 }
 
+bootJarMainClassName {
+    enabled = false
+}
+
 jar {
     enabled = true
 }
 
 dependencies {
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis-reactive', version: '2.5.1'
+
     compile project(':module-core:rushboard-common')
 }

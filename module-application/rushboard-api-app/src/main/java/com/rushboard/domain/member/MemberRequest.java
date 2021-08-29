@@ -5,8 +5,10 @@ import com.rushboard.core.util.Either;
 import com.rushboard.rdbms.member.Member;
 import java.util.regex.Pattern;
 import javax.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 public interface MemberRequest {
@@ -16,8 +18,10 @@ public interface MemberRequest {
 
   Either<ExceptionType, ?> validate();
 
-  @RequiredArgsConstructor
   @Data
+  @AllArgsConstructor
+  @RequiredArgsConstructor
+  @NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
   class MemberSaveRequest implements MemberRequest {
     @NotNull private final String username;
     @NotNull private final String password;
@@ -42,8 +46,10 @@ public interface MemberRequest {
     }
   }
 
-  @AllArgsConstructor
   @Data
+  @AllArgsConstructor
+  @RequiredArgsConstructor
+  @NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
   class MemberUpdateRequest implements MemberRequest {
     @NotNull private final String username;
     private final String password;
