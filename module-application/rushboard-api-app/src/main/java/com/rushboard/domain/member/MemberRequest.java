@@ -19,7 +19,6 @@ public interface MemberRequest {
   Either<ExceptionType, ?> validate();
 
   @Data
-  @AllArgsConstructor
   @RequiredArgsConstructor
   @NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
   class MemberSaveRequest implements MemberRequest {
@@ -48,7 +47,6 @@ public interface MemberRequest {
 
   @Data
   @AllArgsConstructor
-  @RequiredArgsConstructor
   @NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
   class MemberUpdateRequest implements MemberRequest {
     @NotNull private final String username;

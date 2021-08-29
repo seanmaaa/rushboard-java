@@ -49,4 +49,9 @@ public class Member {
     password = encoder.apply(password);
     return this;
   }
+
+  public Member setVerified(boolean verified) {
+    this.verified = verified;
+    return this;
+  }
 }

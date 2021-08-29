@@ -4,4 +4,6 @@ import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EventRepository extends R2dbcRepository<Event, Integer> {}
+public interface EventParticipantRepository extends R2dbcRepository<EventParticipant, Integer> {
+
+}

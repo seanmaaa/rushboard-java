@@ -1,55 +1,51 @@
-package com.rushboard.rdbms.event;
+package com.rushboard.rdbms.bulletin;
 
-import com.rushboard.rdbms.event.type.EventType;
+import com.rushboard.rdbms.bulletin.type.ContentType;
+import java.sql.Timestamp;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-
-import java.sql.Timestamp;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table("event_board")
-public class Event {
+@Table("bulletin_board")
+public class BulletinBoardContent {
 
-  public Event(
-      UUID boardId,
+  public BulletinBoardContent(
+      UUID boardid,
       UUID issuer,
       String title,
-      EventType eventType,
-      String location,
-      String description,
-      Timestamp eventDate) {
-    this.boardid = boardId;
+      ContentType contentType,
+      String content,
+      UUID refEventId) {
+    this.boardid = boardid;
     this.issuer = issuer;
     this.title = title;
-    this.eventtype = eventType;
-    this.location = location;
-    this.description = description;
-    this.eventdate = eventDate;
+    this.contenttype = contentType;
+    this.content = content;
+    this.refeventid = refEventId;
   }
 
   // Foreign Key - R2DBC Doesn't support relations yet.
   private UUID boardid;
 
-  @Id private UUID eventid;
+  @Id private UUID contentid;
 
   // Foreign Key - R2DBC Doesn't support relations yet.
   private UUID issuer;
 
   private String title;
 
-  private EventType eventtype;
+  private ContentType contenttype;
 
-  private String location;
+  private String content;
 
-  private String description;
-
-  private Timestamp eventdate;
+  // Foreign Key - R2DBC Doesn't support relations yet.
+  private UUID refeventid;
 
   private Timestamp createdat;
 
